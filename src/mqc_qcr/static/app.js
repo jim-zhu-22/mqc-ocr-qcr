@@ -3,6 +3,8 @@ let active = null, current = null, results = [], pages = [], preview = '';
 let selectedArtifact = '', inputMode = 'single', polling = false, configDirty = false;
 let publicConfig = null, loadedScore = '', previousScoreCount = 0;
 let visibleRules = [], visibleChecks = [], loadedRules = '';
+let selectedRuleId = '', rulePage = 1;
+const rulePageSize = 10;
 const dimensions = ['necessity', 'completeness', 'accuracy', 'uniqueness', 'final'];
 const qualityLabels = {NECESSITY:'必要性', COMPLETENESS:'完整性', ACCURACY:'准确性', UNIQUENESS:'唯一性'};
 const states = {queued:'排队中', running:'处理中', completed:'已完成', failed:'失败', interrupted:'已中断'};
@@ -30,15 +32,21 @@ function action(id, fn) {
   });
 }
 function setView(view) {
+  if (!['ocr','score','rules'].includes(view)) view = 'ocr';
   for (const node of document.querySelectorAll('.view')) node.classList.toggle('active', node.id === 'view-' + view);
-  for (const button of document.querySelectorAll('.nav-item[data-view]')) {
+  for (const button of document.querySelectorAll('.nav-list [data-view]')) {
     const selected = button.dataset.view === view;
     button.classList.toggle('active', selected);
     if (selected) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
   }
-  $('page-title').textContent = view === 'ocr' ? 'OCR识别' : '四性评分';
+  $('page-title').textContent = {ocr:'OCR识别',score:'四性评分',rules:'四性评分 / 规则查找'}[view];
+  if (location.hash !== '#' + view) location.hash = view;
 }
-for (const button of document.querySelectorAll('.nav-item[data-view]')) button.onclick = () => setView(button.dataset.view);
+for (const button of document.querySelectorAll('.nav-list [data-view], [data-open-view]')) button.onclick = () => {
+  setView(button.dataset.view || button.dataset.openView); window.scrollTo({top:0});
+};
+window.addEventListener('hashchange', () => setView(location.hash.slice(1)));
+setView(location.hash.slice(1));
 function setInputMode(mode) {
   inputMode = mode;
   $('single-input').hidden = mode !== 'single';
@@ -118,7 +126,9 @@ action('go-score', () => {
   window.scrollTo({top:0, behavior:'smooth'});
 });
 function clearRunViews() {
-  visibleRules = []; visibleChecks = []; loadedRules = ''; renderRuleBrowsers();
+  visibleRules = []; visibleChecks = []; loadedRules = ''; selectedRuleId = ''; rulePage = 1;
+  $('rules-search').value = ''; $('rules-quality').value = ''; $('rules-status').value = '';
+  renderRuleBrowsers();
   current = null; results = []; pages = []; loadedScore = ''; previousScoreCount = 0;
   selectedArtifact = ''; $('details').replaceChildren();
   $('score-history').replaceChildren(new Option('暂无评分', ''));
@@ -135,6 +145,7 @@ async function refresh() {
   const data = await api('/api/runs');
   $('runs').replaceChildren();
   $('score-run').replaceChildren(new Option('请选择已解析的控制单', ''));
+  $('rules-run').replaceChildren(new Option('请选择已解析的控制单', ''));
   for (const run of data.runs) {
     const button = document.createElement('button');
     button.className = 'run' + (active === run.id ? ' selected' : '');
@@ -144,7 +155,7 @@ async function refresh() {
     button.append(meta);
     button.onclick = () => selectRun(run.id).catch(e => message(e.message, true));
     $('runs').append(button);
-    if (run.revision) $('score-run').add(new Option(`${run.document_id} · ${run.id.slice(0,8)} · 规则v${run.revision}`, run.id));
+    if (run.revision) for (const id of ['score-run','rules-run']) $(id).add(new Option(`${run.document_id} · ${run.id.slice(0,8)} · 规则v${run.revision}`, run.id));
   }
   if (!data.runs.length) {
     const p = document.createElement('p'); p.className = 'empty-state'; p.textContent = '尚未创建质量单解析任务'; $('runs').append(p);
@@ -152,11 +163,11 @@ async function refresh() {
   if (active) await loadRun();
 }
 action('refresh', refresh);
-$('score-run').addEventListener('change', async () => {
+for (const selector of ['score-run','rules-run']) $(selector).addEventListener('change', async () => {
   try {
-    const id = $('score-run').value;
+    const id = $(selector).value;
     if (id) await selectRun(id);
-    else { active = null; clearRunViews(); $('score-run-note').textContent = '请选择已解析的控制单。'; }
+    else { active = null; clearRunViews(); $('score-run').value = ''; $('rules-run').value = ''; $('score-run-note').textContent = '请选择已解析的控制单。'; }
   } catch (e) { message(e.message, true); }
 });
 async function loadRun() {
@@ -170,6 +181,7 @@ async function loadRun() {
   $('meta-revision').textContent = run.revision ? 'v' + run.revision : '等待生成';
   $('run-state').textContent = `任务：${run.id} · ${states[run.status] || run.status}`;
   $('score-run').value = run.revision ? rid : '';
+  $('rules-run').value = run.revision ? rid : '';
   $('score-run-note').textContent = `${run.document_id} · 规则v${run.revision} · ${run.mode === 'replay' ? '重放样例' : '模型识别'}。物料控制单编号应与当前控制单一致。`;
   if (run.status === 'failed') message(run.error?.message || '处理失败，请查看阶段错误JSON。', true);
   if (run.revision && run.artifacts.includes(`dsl-v${run.revision}.json`)) await loadVisibleRules();
@@ -350,43 +362,81 @@ function ruleText(tag, value, className = '') {
 function checksForRule(rule) {
   return visibleChecks.filter(check => (check.rule_key || check.source_rule_id) === rule.id);
 }
+function ruleStatus(rule) {
+  const checks = checksForRule(rule);
+  return !rule.enabled ? 'disabled' : !checks.length || checks.some(c => c.operator === 'UNKNOWN' || c.execution_status === 'pending_review') ? 'pending' : 'ready';
+}
+const ruleStatusLabels = {ready:'可执行', pending:'待核实', disabled:'已停用'};
 function renderRuleBrowsers() {
-  for (const prefix of ['ocr','score']) {
-    const list = $(prefix+'-rules-list'); list.replaceChildren();
-    $(prefix+'-rules-version').textContent = loadedRules ? `当前规则 v${loadedRules.split('/')[1]}` : '等待规则生成';
-    const term = $(prefix+'-rules-search').value.trim().toLowerCase(), quality = $(prefix+'-rules-quality').value;
-    const filtered = visibleRules.filter(rule => (!quality || rule.quality_type === quality) && JSON.stringify(rule).concat(JSON.stringify(checksForRule(rule))).toLowerCase().includes(term));
-    const counts = Object.entries(qualityLabels).map(([key,label]) => `${label} ${visibleRules.filter(r => r.quality_type === key).length} 条`).join(' · ');
-    $(prefix+'-rules-summary').textContent = loadedRules ? `共 ${visibleRules.length} 条，显示 ${filtered.length} 条；${counts}` : '选择已解析的控制单后自动显示规则';
-    if (!filtered.length) list.append(ruleText('p', loadedRules ? '没有符合条件的规则' : '暂无规则', 'empty-state'));
-    for (const rule of filtered) {
-      const card = document.createElement('article'); card.className = 'rule-card';
-      const heading = ruleText('h3', `${rule.id} · ${rule.rule_title}`);
-      const checks = checksForRule(rule);
-      const status = !rule.enabled ? '已停用' : !checks.length || checks.some(c => c.operator === 'UNKNOWN') ? '待核实' : '已生成判断条件';
-      card.append(heading, ruleText('p', `${qualityLabels[rule.quality_type] || '待确认分类'} · 适用物料：${rule.material_entity || '未指定'} · 权重：${rule.weight} · ${status}`, 'rule-meta'), ruleText('p', rule.rule_text, 'rule-content'));
-      const detail = document.createElement('details'); detail.className = 'rule-conditions';
-      detail.append(ruleText('summary','判断条件与来源'),ruleText('p',`适用条件：${rule.condition_text || '未设置额外条件（仍需匹配控制单及物料对象）'}`));
-      if (!checks.length) detail.append(ruleText('p',rule.enabled ? '暂无执行条件，需完成编译后核验。' : '规则已停用，不参与当前评分。'));
-      for (const check of checks) {
-        const box = document.createElement('div'); box.className = 'rule-check';
-        const expected = typeof check.expected_value === 'object' ? JSON.stringify(check.expected_value,null,2) : String(check.expected_value ?? '');
-        box.append(ruleText('strong',`${check.dsl_id} · ${fieldLabels[check.field_name] || check.field_name} · ${operatorLabels[check.operator] || check.operator}`),ruleText('p',`字段：${check.field_name}；判断方式：${check.operator}`),ruleText('pre',`预期值：${expected || '未设置'}`));
-        if (check.offline_handler) box.append(ruleText('p','演示重放使用确定性参考库核验，不调用模型评分。'));
-        if (check.semantic) box.append(ruleText('p',check.semantic));
-        detail.append(box);
-      }
-      detail.append(ruleText('p',`来源章节：${rule.source_sections.join('、') || '未标注'}；页码：${rule.source_pages.join('、') || '未标注'}`));
-      const button = ruleText('button','查看控制单原文','secondary-btn');
-      button.onclick = () => showSource({...rule,source_text:rule.rule_text}); detail.append(button);
-      card.append(detail); list.append(card);
-    }
+  const tokens = $('rules-search').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const quality = $('rules-quality').value, status = $('rules-status').value;
+  const filtered = visibleRules.filter(rule => {
+    const checks = checksForRule(rule);
+    const haystack = [rule.id,rule.rule_title,rule.rule_text,rule.material_entity,rule.condition_text,qualityLabels[rule.quality_type],...checks.flatMap(c => [c.field_name,fieldLabels[c.field_name],c.operator,operatorLabels[c.operator],JSON.stringify(c.expected_value)])].join(' ').toLowerCase();
+    return (!quality || rule.quality_type === quality) && (!status || ruleStatus(rule) === status) && tokens.every(term => haystack.includes(term));
+  });
+  $('rules-version').textContent = loadedRules ? `当前规则 v${loadedRules.split('/')[1]}` : '等待规则生成';
+  $('rules-counts').replaceChildren(...Object.entries(qualityLabels).map(([key,label]) => ruleText('span',`${label} ${visibleRules.filter(r => r.quality_type === key).length}`, 'rule-count')));
+  $('rules-summary').textContent = loadedRules ? `匹配 ${filtered.length} / 共 ${visibleRules.length} 条` : '请选择已解析的控制单';
+  const pageCount = Math.ceil(filtered.length / rulePageSize);
+  rulePage = Math.max(1, Math.min(rulePage,pageCount));
+  const pageRules = filtered.slice((rulePage-1)*rulePageSize, rulePage*rulePageSize);
+  if (!pageRules.some(rule => rule.id === selectedRuleId)) selectedRuleId = pageRules[0]?.id || '';
+  const body = $('rules-table').querySelector('tbody'); body.replaceChildren();
+  for (const rule of pageRules) {
+    const row = document.createElement('tr'); row.className = rule.id === selectedRuleId ? 'selected-rule' : '';
+    const idCell = document.createElement('td'), button = ruleText('button',rule.id,'text-btn');
+    button.setAttribute('aria-label',`查看规则 ${rule.id}`); button.setAttribute('aria-pressed',String(rule.id === selectedRuleId));
+    const select = () => {
+      selectedRuleId = rule.id; renderRuleBrowsers();
+      $('rules-table').querySelector('[aria-pressed="true"]').focus({preventScroll:true});
+      if (window.matchMedia('(max-width:1100px)').matches) $('rule-detail').scrollIntoView({behavior:'smooth',block:'start'});
+    };
+    button.onclick = event => { event.stopPropagation(); select(); };
+    row.onclick = select; idCell.append(button);
+    const nameCell = document.createElement('td'); nameCell.append(ruleText('strong',rule.rule_title),ruleText('small',rule.material_entity || '未指定物料'));
+    const stateCell = document.createElement('td'); stateCell.append(ruleText('span',ruleStatusLabels[ruleStatus(rule)],'rule-state '+ruleStatus(rule)));
+    row.append(idCell,nameCell,ruleText('td',qualityLabels[rule.quality_type] || '待确认'),stateCell); body.append(row);
   }
+  if (!pageRules.length) {
+    const row = document.createElement('tr'), cell = ruleText('td',loadedRules ? '没有匹配的规则，请更换关键词或清空筛选。' : '请先选择已解析的控制单。','empty-state'); cell.colSpan=4; row.append(cell); body.append(row);
+  }
+  $('rules-page').textContent = `第 ${pageCount ? rulePage : 0} / ${pageCount} 页 · 每页 ${rulePageSize} 条`;
+  $('rules-prev').disabled = rulePage <= 1; $('rules-next').disabled = rulePage >= pageCount;
+  renderRuleDetail(pageRules.find(rule => rule.id === selectedRuleId));
 }
-for (const prefix of ['ocr','score']) {
-  $(prefix+'-rules-search').addEventListener('input',renderRuleBrowsers);
-  $(prefix+'-rules-quality').addEventListener('change',renderRuleBrowsers);
+function renderRuleDetail(rule) {
+  const detail = $('rule-detail'); detail.replaceChildren();
+  if (!rule) { detail.append(ruleText('p',loadedRules ? '暂无匹配规则' : '选择控制单后，点击列表查看规则详情','empty-state')); return; }
+  detail.append(ruleText('span',`${rule.id} · ${qualityLabels[rule.quality_type]}`,'rule-detail-kicker'),ruleText('h2',rule.rule_title));
+  const meta = document.createElement('dl'); meta.className='rule-detail-meta';
+  for (const [label,value] of [['适用物料',rule.material_entity || '未指定'],['状态',ruleStatusLabels[ruleStatus(rule)]],['权重',rule.weight],['来源页码',rule.source_pages.join('、')]]) {
+    const group = document.createElement('div'); group.append(ruleText('dt',label),ruleText('dd',value));meta.append(group);
+  }
+  detail.append(meta,ruleText('h3','规则内容'),ruleText('p',rule.rule_text,'rule-content'),ruleText('h3','适用条件'),ruleText('p',rule.condition_text || '未设置额外条件，仍需匹配控制单及物料对象。','rule-content'));
+  const source = document.createElement('div'); source.className = 'rule-source-bar';
+  const sourceButton = ruleText('button','查看控制单原文','secondary-btn'); sourceButton.onclick = () => showSource({...rule,source_text:rule.rule_text});
+  source.append(ruleText('span',`来源章节 ${rule.source_sections.join('、')}`),sourceButton); detail.append(source);
+  const checks = checksForRule(rule), execution = document.createElement('details'); execution.className='rule-conditions';
+  execution.append(ruleText('summary',`判断条件（${checks.length} 项）`));
+  if (!checks.length) execution.append(ruleText('p',rule.enabled ? '暂无执行条件，需完成编译后核验。' : '已停用，不参与评分。'));
+  for (const check of checks) {
+    const box = document.createElement('div'); box.className='rule-check';
+    let expected = check.expected_value;
+    if (typeof expected === 'string') { try { expected = JSON.parse(expected); } catch {} }
+    const value = typeof expected === 'object' ? JSON.stringify(expected,null,2) : String(expected ?? '');
+    box.append(ruleText('strong',`${check.dsl_id} · ${fieldLabels[check.field_name] || check.field_name} · ${operatorLabels[check.operator] || check.operator}`),ruleText('p',`字段：${check.field_name}；判断方式：${check.operator}`),ruleText('pre',`预期值：${value || '未设置'}`));
+    if (check.offline_handler) box.append(ruleText('p','演示重放使用确定性参考库核验，不调用模型评分。'));
+    if (check.semantic) box.append(ruleText('p',check.semantic)); execution.append(box);
+  }
+  detail.append(execution);
 }
+for (const [id,event] of [['rules-search','input'],['rules-quality','change'],['rules-status','change']]) $(id).addEventListener(event,() => { rulePage=1; renderRuleBrowsers(); });
+$('rules-reset').onclick = () => { $('rules-search').value=''; $('rules-quality').value=''; $('rules-status').value=''; rulePage=1; renderRuleBrowsers(); };
+$('rules-prev').onclick = () => { rulePage--; renderRuleBrowsers(); };
+$('rules-next').onclick = () => { rulePage++; renderRuleBrowsers(); };
+renderRuleBrowsers();
+
 action('load-rules', async () => {
   if (!active || !current?.revision) throw new Error('请选择已解析的控制单。');
   const data = await api(`/api/runs/${active}/artifacts/rules-v${current.revision}.json`);

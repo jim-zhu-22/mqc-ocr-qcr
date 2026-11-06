@@ -8,6 +8,7 @@
     <nav class="nav-list">
       <button class="nav-item active" data-view="ocr" aria-current="page">OCR识别</button>
       <button class="nav-item" data-view="score">四性评分</button>
+      <button class="nav-subitem" data-view="rules">规则查找</button>
     </nav>
     <div class="sidebar-note">质量控制单识别<br>物料主数据四性评分</div>
     <div class="sidebar-footer"><span class="status-dot" id="service-dot"></span><span id="server-status">正在连接服务</span></div>
@@ -32,25 +33,15 @@
       <section class="panel"><div class="panel-heading"><h2>质量单任务记录</h2><button class="secondary-btn" id="refresh">刷新任务</button></div><div id="runs" class="task-list"><p class="empty-state">尚未创建质量单解析任务</p></div><p class="inline-status" id="run-state">选择任务查看识别结果</p></section>
       <div class="mqc-review-layout">
         <section class="panel mqc-pdf-preview-panel"><div class="panel-heading"><h2>控制单页图预览</h2><label class="page-picker">页码<select id="ocr-page"><option value="">等待识别</option></select></label></div><div class="mqc-pdf-preview" id="ocr-image"><span>识别后显示对应页图</span></div></section>
-        <section class="panel mqc-review-panel"><div class="panel-heading"><h2>逐页 OCR 识别结果</h2><span id="ocr-page-label">等待识别</span></div><pre id="ocr-text" class="ocr-text">尚无识别结果</pre><div class="button-row"><button class="primary-btn" id="go-score">使用当前控制单进行四性评分</button></div></section>
+        <section class="panel mqc-review-panel"><div class="panel-heading"><h2>逐页 OCR 识别结果</h2><span id="ocr-page-label">等待识别</span></div><pre id="ocr-text" class="ocr-text">尚无识别结果</pre><div class="button-row"><button class="primary-btn" id="go-score">使用当前控制单进行四性评分</button><button class="secondary-btn" data-open-view="rules">查看识别规则</button></div></section>
       </div>
-      <section class="panel rule-browser" aria-labelledby="ocr-rules-title">
-        <div class="panel-heading"><h2 id="ocr-rules-title">识别出的评分规则</h2><span id="ocr-rules-version">等待选择控制单</span></div>
-        <p class="hint">直接查看规则内容；展开“判断条件与来源”可查看执行条件和控制单原文。这里展示当前规则版本，历史评分的依据请在评分明细中查看。</p>
-        <div class="query-row"><label>搜索规则<input id="ocr-rules-search" placeholder="规则编号、内容、物料或字段"></label><label>所属四性<select id="ocr-rules-quality"><option value="">全部规则</option><option value="NECESSITY">必要性</option><option value="COMPLETENESS">完整性</option><option value="ACCURACY">准确性</option><option value="UNIQUENESS">唯一性</option><option value="UNKNOWN">待确认分类</option></select></label></div>
-        <p id="ocr-rules-summary" class="inline-status" aria-live="polite">选择已解析的控制单后自动显示规则</p><div id="ocr-rules-list" class="rule-list"></div>
-      </section>
+
       <details class="panel" id="json-panel"><summary>识别结果与阶段 JSON</summary><div class="query-row"><label>阶段产物<select id="artifact"><option value="">选择任务后查看</option></select></label><label>查找内容<input id="search" placeholder="规则编号、页码或关键字"></label></div><div class="button-row"><a id="download" class="text-btn" hidden>下载当前 JSON</a><a id="export" class="text-btn" hidden>下载全部 JSON</a><span id="search-count" class="inline-status"></span></div><pre id="preview" class="json-preview">{ "status": "ready" }</pre></details>
     </section>
 
     <section class="view" id="view-score">
-      <section class="panel"><div class="panel-heading"><h2>评分控制单</h2><span>选择已完成解析的任务及评分历史</span></div><div class="form-grid"><label>质量控制单 / 识别任务<select id="score-run"><option value="">请选择已解析的控制单</option></select></label><label>评分历史<select id="score-history"><option value="">暂无评分</option></select></label></div><p id="score-run-note" class="hint">请先完成OCR解析，或加载演示控制单。</p></section>
-      <section class="panel rule-browser" aria-labelledby="score-rules-title">
-        <div class="panel-heading"><h2 id="score-rules-title">当前控制单评分规则</h2><span id="score-rules-version">等待选择控制单</span></div>
-        <p class="hint">直接查看规则内容；展开“判断条件与来源”可查看执行条件和控制单原文。这里展示当前规则版本，历史评分的依据请在评分明细中查看。</p>
-        <div class="query-row"><label>搜索规则<input id="score-rules-search" placeholder="规则编号、内容、物料或字段"></label><label>所属四性<select id="score-rules-quality"><option value="">全部规则</option><option value="NECESSITY">必要性</option><option value="COMPLETENESS">完整性</option><option value="ACCURACY">准确性</option><option value="UNIQUENESS">唯一性</option><option value="UNKNOWN">待确认分类</option></select></label></div>
-        <p id="score-rules-summary" class="inline-status" aria-live="polite">选择已解析的控制单后自动显示规则</p><div id="score-rules-list" class="rule-list"></div>
-      </section>
+      <section class="panel"><div class="panel-heading"><h2>评分控制单</h2><button class="secondary-btn" data-open-view="rules">查找评分规则 →</button></div><div class="form-grid"><label>质量控制单 / 识别任务<select id="score-run"><option value="">请选择已解析的控制单</option></select></label><label>评分历史<select id="score-history"><option value="">暂无评分</option></select></label></div><p id="score-run-note" class="hint">请先完成OCR解析，或加载演示控制单。</p></section>
+
       <section class="panel form-panel"><div class="panel-heading"><h2>物料数据评分</h2><span>必要性、完整性、准确性、唯一性</span></div>
         <div class="subpage-tabs" role="tablist" aria-label="评分输入方式"><button class="subpage-tab active" role="tab" aria-selected="true" data-input="single">单条物料</button><button class="subpage-tab" role="tab" aria-selected="false" data-input="batch">JSON 批量物料</button></div>
         <div id="single-input" class="form-grid material-fields">
@@ -64,6 +55,25 @@
         <div class="button-row"><button class="primary-btn" id="score">开始四性评分</button><span id="material-count" class="inline-status">输入物料后手动发起评分</span></div><p class="hint">通过得分；失败或待核实计0分；明确不适用的规则不进分母。修改物料或规则后需手动重新评分。</p>
       </section>
       <section class="panel"><div class="panel-heading"><h2>四性评分查询</h2><a id="score-download" class="text-btn" hidden>下载评分 JSON</a></div><div class="score-search portable-search"><label>物料编码 / 记录编号<input id="filter-text" placeholder="输入关键字"></label><label>筛选维度<select id="filter-dimension"><option value="final">综合评分</option><option value="necessity">必要性</option><option value="completeness">完整性</option><option value="accuracy">准确性</option><option value="uniqueness">唯一性</option></select></label><label>阈值条件<select id="filter-operator"><option value="">不启用</option><option value="below">低于阈值</option><option value="above">高于阈值</option></select></label><label>阈值分数<input id="filter-value" type="number" min="0" max="100" value="80"></label><button class="primary-btn" id="filter-score">查询评分</button></div><p class="inline-status" id="score-summary">暂无评分结果</p><div class="table-wrap"><table id="scores"><thead><tr><th>记录编号</th><th>物料编码</th><th>必要性</th><th>完整性</th><th>准确性</th><th>唯一性</th><th>综合评分</th><th>操作</th></tr></thead><tbody><tr><td colspan="8" class="empty-state">请选择任务并手动评分</td></tr></tbody></table></div><div id="details"></div></section>
+
+    </section>
+    <section class="view" id="view-rules">
+      <section class="panel rules-toolbar">
+        <div class="panel-heading"><div><h2>查找控制单规则</h2><p class="hint">先选控制单，再搜索或筛选。点击一条规则查看完整内容。</p></div><span class="pill" id="rules-version">等待选择控制单</span></div>
+        <label class="rules-document">质量控制单<select id="rules-run"><option value="">请选择已解析的控制单</option></select></label>
+        <div class="rules-filters"><label>搜索规则<input id="rules-search" type="search" placeholder="例如：型号 完整，或 R0002"></label><label>所属四性<select id="rules-quality"><option value="">全部四性</option><option value="NECESSITY">必要性</option><option value="COMPLETENESS">完整性</option><option value="ACCURACY">准确性</option><option value="UNIQUENESS">唯一性</option></select></label><label>规则状态<select id="rules-status"><option value="">全部状态</option><option value="ready">可执行</option><option value="pending">待核实</option><option value="disabled">已停用</option></select></label><button class="secondary-btn" id="rules-reset">清空筛选</button></div>
+        <p class="hint">输入即搜索；空格分隔的多个词需同时匹配。支持规则编号、名称、正文、物料和字段。</p>
+        <div id="rules-counts" class="rules-counts"></div>
+      </section>
+      <div class="rules-workspace">
+        <section class="panel rules-results" aria-label="规则查找结果">
+          <div class="panel-heading"><h2>规则列表</h2><span id="rules-summary" aria-live="polite">请选择控制单</span></div>
+          <div class="table-wrap rules-table-wrap"><table id="rules-table"><thead><tr><th>规则编号</th><th>规则名称 / 适用物料</th><th>四性</th><th>状态</th></tr></thead><tbody></tbody></table></div>
+          <div class="rules-pagination"><button class="secondary-btn" id="rules-prev">上一页</button><span id="rules-page">第 0 / 0 页</span><button class="secondary-btn" id="rules-next">下一页</button></div>
+        </section>
+        <section class="panel rules-detail" aria-label="规则详情"><div id="rule-detail"><p class="empty-state">选择控制单后，点击左侧规则查看详情</p></div></section>
+      </div>
+      <p class="hint">这里展示当前规则版本。查看历史评分使用的规则，请返回评分页打开对应记录的评分明细。</p>
       <details class="panel" id="rule-panel"><summary>当前控制单评分规则维护</summary><p class="hint">在当前评分任务内增删改规则。修改语义时同步修改checks，或设为[]让文本模型重新编译。保存自动更新DSL，历史评分保持不变。</p><div class="button-row"><button class="secondary-btn" id="load-rules">加载当前规则</button><button class="primary-btn" id="save-rules">保存规则并更新 DSL</button></div><textarea id="rules-editor" class="json-editor" spellcheck="false" aria-label="规则JSON编辑器">[]</textarea></details>
     </section>
   </main>
