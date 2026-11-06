@@ -1,20 +1,65 @@
 <!doctype html>
-<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MQC · OCR → QCR</title><link rel="stylesheet" href="/static/style.css"></head>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>主数据质量提升 · OCR与四性评分</title><link rel="stylesheet" href="/static/template.css"><link rel="stylesheet" href="/static/style.css"></head>
 <body>
-<header><div><span class="eyebrow">CONTROL SHEET WORKBENCH</span><h1>MQC <span>OCR → QCR</span></h1><p>从质量控制单到可追溯的四性评分</p></div><span class="badge">本地研究 Demo · 开发快照</span></header>
-<div id="notice" role="status" aria-live="polite">准备就绪。选择重放体验，或配置模型后运行真实流程。</div>
-<main>
-<aside><h2>运行任务</h2><button id="refresh" class="secondary">刷新任务</button><div id="runs"></div><p class="muted">每次评分保存独立快照。更改规则或物料后，请手动复评。</p></aside>
-<div class="workspace">
-<details id="configuration"><summary>01　模型连接配置 <span>OCR 与文本模型分别设置</span></summary>
-<p>支持 OpenAI 兼容 Chat Completions 接口。URL填写到 /v1，或完整 /chat/completions。密钥只保存在本次服务进程内存中，重启后需重新填写。</p>
-<div class="two"><fieldset><legend>视觉 OCR 模型</legend><label>API 地址<input id="ocr-url" placeholder="https://your-provider.example/v1"></label><label>API 密钥<input id="ocr-key" type="password" autocomplete="off" placeholder="按需填写"></label><label>模型名称<input id="ocr-model" placeholder="填写视觉模型名称"></label><div class="three"><label>超时 / 秒<input id="ocr-timeout" type="number" value="90" min="1" max="600"></label><label>重试次数<input id="ocr-retries" type="number" value="2" min="0" max="5"></label><label>输出token上限<input id="ocr-tokens" type="number" value="8192"></label></div><button id="check-ocr" class="secondary">检查 OCR 连接</button></fieldset>
-<fieldset><legend>文本 / 规则模型</legend><label>API 地址<input id="text-url" placeholder="https://your-provider.example/v1"></label><label>API 密钥<input id="text-key" type="password" autocomplete="off" placeholder="按需填写"></label><label>模型名称<input id="text-model" placeholder="填写文本模型名称"></label><div class="three"><label>超时 / 秒<input id="text-timeout" type="number" value="90" min="1" max="600"></label><label>重试次数<input id="text-retries" type="number" value="2" min="0" max="5"></label><label>输出token上限<input id="text-tokens" type="number" value="8192"></label></div><button id="check-text" class="secondary">检查文本连接</button></fieldset></div>
-<button id="save-config">应用连接配置</button><button id="clear-config" class="secondary">清除内存密钥</button><p id="config-status" class="muted"></p></details>
-<section><h2>02　创建运行</h2><div class="row"><label>模式<select id="mode"><option value="replay">演示重放 · 已有识别与规则</option><option value="live">真实调用 · OCR → 提取 → IR/DSL</option></select></label><label>控制单编号<input id="document-id" value="DOC-A-0001"></label><label>PDF / 图像<input id="document-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.tif,.tiff,.bmp"></label></div><p id="mode-note">重放不调用模型。使用脱敏五页控制单和已保存的识别结果；评分仍实际执行。</p><button id="start">开始运行</button><a href="/api/samples/document" download="control_sheet.pdf">下载脱敏测试控制单</a></section>
-<section id="current"><div class="section-head"><h2>03　任务与阶段</h2><a id="export" hidden>下载全部 JSON</a></div><div id="run-state" class="muted">尚未选择任务</div><div class="row"><label>阶段产物<select id="artifact"><option>选择任务后查看</option></select></label><label>查找 JSON 内容<input id="search" placeholder="规则ID、页码、样例编号或关键字"></label><a id="download" hidden>下载当前 JSON</a></div><p id="search-count" class="muted"></p><pre id="preview">{ "status": "ready" }</pre></section>
-<details id="rule-panel"><summary>04　人工维护规则 <span>增删改后自动更新 DSL</span></summary><p>编辑JSON数组以新增、删除、停用规则或调整权重。修改规则语义后，请同时更新 checks，或将 checks 设为 [] 交给文本模型重新编译。source_sections 指向本任务章节，页码自动重建。保存不会改写已有分数。</p><button id="load-rules" class="secondary">加载当前规则</button><textarea id="rules-editor" spellcheck="false" aria-label="规则JSON编辑器">[]</textarea><button id="save-rules">保存规则并更新 DSL</button><p class="muted">照片说明不能启用为四性评分规则。未知操作符保留为待核实，计0分。</p></details>
-<details id="score-panel"><summary>05　物料与评分 <span>手动执行 · 保留每次结果</span></summary><p>输入物料JSON与参考证据。完整性使用确定性规则；唯一性按控制单定义判断设备身份。通过得分，失败或待核实计0分；明确不适用不进分母。</p><div class="row"><button id="load-sample" class="secondary">加载50条合成物料与参考证据</button><label>导入评分输入 JSON<input id="materials-file" type="file" accept=".json"></label></div><textarea id="materials" spellcheck="false" aria-label="物料JSON编辑器">{"materials": [], "catalog": {}, "dimension_weights": {"necessity": 1, "completeness": 1, "accuracy": 1, "uniqueness": 1}, "ml": {}}</textarea><p class="muted">ml 默认关闭。已有训练模型可按 docs/CONTRACTS.md 的证据服务契约接入；完整性禁止ML。合成参考库仅用于测试，不代表真实厂家标准。</p><button id="score">手动评分 / 复评</button></details>
-<section><div class="section-head"><h2>评分结果</h2><select id="score-history" aria-label="评分快照"><option>暂无评分</option></select></div><div id="score-summary" class="muted">选择评分快照查看五项数值分数</div><div class="table-wrap"><table id="scores"><thead><tr><th>记录</th><th>必要性</th><th>完整性</th><th>准确性</th><th>唯一性</th><th>总分</th></tr></thead><tbody></tbody></table></div><div id="details"></div></section>
-<section id="source-panel" hidden><h2>来源追溯</h2><div id="source-text"></div><div id="source-pages" class="source-pages"></div></section>
-</div></main><footer>MQC-OCR-QCR · JSON artifacts throughout · 本地可审查构建，未指定正式发布版本或开源许可证</footer><script src="/static/app.js" defer></script></body></html>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="主菜单">
+    <div class="brand"><div class="brand-mark">MD</div><div><strong>主数据治理</strong><span>OCR 与四性评分 Demo</span></div></div>
+    <nav class="nav-list">
+      <button class="nav-item active" data-view="ocr" aria-current="page">OCR识别</button>
+      <button class="nav-item" data-view="score">四性评分</button>
+    </nav>
+    <div class="sidebar-note">质量控制单识别<br>物料主数据四性评分</div>
+    <div class="sidebar-footer"><span class="status-dot" id="service-dot"></span><span id="server-status">正在连接服务</span></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><div><p class="eyebrow">核电备件智能化主数据质量提升</p><h1 id="page-title">OCR识别</h1></div><div class="top-actions"><span class="pill" id="api-status">模型API未配置</span><button class="secondary-btn" id="open-config">模型API配置</button></div></header>
+    <div id="notice" class="notice" role="status" aria-live="polite">选择质量控制单进行识别，或加载演示样例。</div>
+
+    <section class="view active" id="view-ocr">
+      <section class="panel form-panel mqc-upload-panel">
+        <div class="panel-heading"><h2>质量控制单上传解析</h2><span>逐页OCR → 章节切分 → 规则生成 → DSL</span></div>
+        <div class="form-grid upload-controls"><label>识别方式<select id="mode"><option value="live">模型API识别</option><option value="replay">演示样例重放</option></select></label><label>质量控制单编号<input id="document-id" value="DOC-A-0001" placeholder="输入控制单编号"></label></div>
+        <label class="file-drop" for="document-file"><input id="document-file" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.tif,.tiff,.bmp"><span>选择质量控制单 PDF / 图像</span><strong id="selected-file">未选择文件</strong></label>
+        <div class="button-row"><button class="primary-btn" id="start">上传并 OCR 识别</button><button class="secondary-btn" id="start-replay">加载演示控制单</button><a class="text-btn" href="/api/samples/document" download="control_sheet.pdf">下载脱敏控制单</a><span id="mode-note" class="inline-status">使用配置的视觉与文本模型处理所选文件。</span></div>
+      </section>
+      <section class="mqc-sheet-meta" aria-label="识别任务概况">
+        <div class="mqc-sheet-meta-item"><span>质量控制单编号</span><strong id="meta-document">等待选择</strong></div>
+        <div class="mqc-sheet-meta-item"><span>识别方式</span><strong id="meta-mode">等待选择</strong></div>
+        <div class="mqc-sheet-meta-item"><span>任务状态</span><strong id="meta-status">尚未创建任务</strong></div>
+        <div class="mqc-sheet-meta-item"><span>规则版本</span><strong id="meta-revision">—</strong></div>
+      </section>
+      <section class="panel"><div class="panel-heading"><h2>质量单任务记录</h2><button class="secondary-btn" id="refresh">刷新任务</button></div><div id="runs" class="task-list"><p class="empty-state">尚未创建质量单解析任务</p></div><p class="inline-status" id="run-state">选择任务查看识别结果</p></section>
+      <div class="mqc-review-layout">
+        <section class="panel mqc-pdf-preview-panel"><div class="panel-heading"><h2>控制单页图预览</h2><label class="page-picker">页码<select id="ocr-page"><option value="">等待识别</option></select></label></div><div class="mqc-pdf-preview" id="ocr-image"><span>识别后显示对应页图</span></div></section>
+        <section class="panel mqc-review-panel"><div class="panel-heading"><h2>逐页 OCR 识别结果</h2><span id="ocr-page-label">等待识别</span></div><pre id="ocr-text" class="ocr-text">尚无识别结果</pre><div class="button-row"><button class="primary-btn" id="go-score">使用当前控制单进行四性评分</button></div></section>
+      </div>
+      <details class="panel" id="json-panel"><summary>识别结果与阶段 JSON</summary><div class="query-row"><label>阶段产物<select id="artifact"><option value="">选择任务后查看</option></select></label><label>查找内容<input id="search" placeholder="规则编号、页码或关键字"></label></div><div class="button-row"><a id="download" class="text-btn" hidden>下载当前 JSON</a><a id="export" class="text-btn" hidden>下载全部 JSON</a><span id="search-count" class="inline-status"></span></div><pre id="preview" class="json-preview">{ "status": "ready" }</pre></details>
+    </section>
+
+    <section class="view" id="view-score">
+      <section class="panel"><div class="panel-heading"><h2>评分控制单</h2><span>选择已完成解析的任务及评分历史</span></div><div class="form-grid"><label>质量控制单 / 识别任务<select id="score-run"><option value="">请选择已解析的控制单</option></select></label><label>评分历史<select id="score-history"><option value="">暂无评分</option></select></label></div><p id="score-run-note" class="hint">请先完成OCR解析，或加载演示控制单。</p></section>
+      <section class="panel form-panel"><div class="panel-heading"><h2>物料数据评分</h2><span>必要性、完整性、准确性、唯一性</span></div>
+        <div class="subpage-tabs" role="tablist" aria-label="评分输入方式"><button class="subpage-tab active" role="tab" aria-selected="true" data-input="single">单条物料</button><button class="subpage-tab" role="tab" aria-selected="false" data-input="batch">JSON 批量物料</button></div>
+        <div id="single-input" class="form-grid material-fields">
+          <label>物料编码<input id="material-code" placeholder="输入物料编码"></label><label>物料名称 / 描述<input id="material-description" placeholder="输入物料描述"></label>
+          <label>物料实体 / 类别<input id="material-entity" placeholder="与控制单规则对象对应"></label><label>规格型号<input id="material-model" placeholder="完整型号"></label>
+          <label>制造商<input id="material-manufacturer" placeholder="输入制造商名称"></label><label>采购订单文本<input id="material-po" placeholder="输入采购订单文本"></label>
+          <label class="wide">关键参数 JSON<textarea id="material-parameters" rows="2" spellcheck="false">{}</textarea></label>
+        </div>
+        <div id="batch-input" hidden><div class="button-row"><label class="file-import">导入物料 JSON<input id="materials-file" type="file" accept=".json"></label><button id="load-sample" class="secondary-btn">加载50条合成物料</button></div><textarea id="materials" class="json-editor" spellcheck="false" aria-label="批量物料JSON">{"materials":[],"catalog":{},"dimension_weights":{"necessity":1,"completeness":1,"accuracy":1,"uniqueness":1},"ml":{}}</textarea></div>
+        <details class="input-evidence"><summary>参考证据与评分参数</summary><p class="hint">单条评分使用下方参考库及来源字段。批量评分可在输入JSON中逐条提供证据。未提供的证据保留为待核实，不补造。</p><label>参考库与来源证据 JSON<textarea id="single-evidence" class="json-editor compact" spellcheck="false">{"catalog":{},"source_evidence":[],"dimension_weights":{"necessity":1,"completeness":1,"accuracy":1,"uniqueness":1},"ml":{}}</textarea></label></details>
+        <div class="button-row"><button class="primary-btn" id="score">开始四性评分</button><span id="material-count" class="inline-status">输入物料后手动发起评分</span></div><p class="hint">通过得分；失败或待核实计0分；明确不适用的规则不进分母。修改物料或规则后需手动重新评分。</p>
+      </section>
+      <section class="panel"><div class="panel-heading"><h2>四性评分查询</h2><a id="score-download" class="text-btn" hidden>下载评分 JSON</a></div><div class="score-search portable-search"><label>物料编码 / 记录编号<input id="filter-text" placeholder="输入关键字"></label><label>筛选维度<select id="filter-dimension"><option value="final">综合评分</option><option value="necessity">必要性</option><option value="completeness">完整性</option><option value="accuracy">准确性</option><option value="uniqueness">唯一性</option></select></label><label>阈值条件<select id="filter-operator"><option value="">不启用</option><option value="below">低于阈值</option><option value="above">高于阈值</option></select></label><label>阈值分数<input id="filter-value" type="number" min="0" max="100" value="80"></label><button class="primary-btn" id="filter-score">查询评分</button></div><p class="inline-status" id="score-summary">暂无评分结果</p><div class="table-wrap"><table id="scores"><thead><tr><th>记录编号</th><th>物料编码</th><th>必要性</th><th>完整性</th><th>准确性</th><th>唯一性</th><th>综合评分</th><th>操作</th></tr></thead><tbody><tr><td colspan="8" class="empty-state">请选择任务并手动评分</td></tr></tbody></table></div><div id="details"></div></section>
+      <details class="panel" id="rule-panel"><summary>当前控制单评分规则维护</summary><p class="hint">在当前评分任务内增删改规则。修改语义时同步修改checks，或设为[]让文本模型重新编译。保存自动更新DSL，历史评分保持不变。</p><div class="button-row"><button class="secondary-btn" id="load-rules">加载当前规则</button><button class="primary-btn" id="save-rules">保存规则并更新 DSL</button></div><textarea id="rules-editor" class="json-editor" spellcheck="false" aria-label="规则JSON编辑器">[]</textarea></details>
+    </section>
+  </main>
+</div>
+<dialog id="config-dialog" aria-labelledby="config-title"><div class="dialog-heading"><h2 id="config-title">模型API配置</h2><button class="secondary-btn" id="close-config">关闭</button></div><p class="hint">分别配置OCR视觉模型与文本模型。密钥只在服务进程内存中保存，重启后重新填写。</p><div class="layout-grid config-grid">
+<section class="panel form-panel"><div class="panel-heading"><h3>OCR视觉模型</h3></div><div class="form-grid"><label class="wide">API地址<input id="ocr-url" placeholder="https://your-provider.example/v1"></label><label class="wide">API密钥<input id="ocr-key" type="password" autocomplete="off"></label><label class="wide">模型名称<input id="ocr-model" placeholder="填写视觉模型名称"></label><label>请求超时 / 秒<input id="ocr-timeout" type="number" value="90"></label><label>重试次数<input id="ocr-retries" type="number" value="2"></label><label class="wide">输出token上限<input id="ocr-tokens" type="number" value="8192"></label></div><div class="button-row"><button class="secondary-btn" id="check-ocr">测试OCR连接</button></div></section>
+<section class="panel form-panel"><div class="panel-heading"><h3>文本 / 规则模型</h3></div><div class="form-grid"><label class="wide">API地址<input id="text-url" placeholder="https://your-provider.example/v1"></label><label class="wide">API密钥<input id="text-key" type="password" autocomplete="off"></label><label class="wide">模型名称<input id="text-model" placeholder="填写文本模型名称"></label><label>请求超时 / 秒<input id="text-timeout" type="number" value="90"></label><label>重试次数<input id="text-retries" type="number" value="2"></label><label class="wide">输出token上限<input id="text-tokens" type="number" value="8192"></label></div><div class="button-row"><button class="secondary-btn" id="check-text">测试文本连接</button></div></section>
+</div><div class="button-row"><button class="primary-btn" id="save-config">保存配置</button><button class="secondary-btn" id="clear-config">清除内存密钥</button><span id="config-status" class="inline-status" role="status"></span></div></dialog>
+<dialog id="source-dialog" aria-labelledby="source-title"><div class="dialog-heading"><h2 id="source-title">规则来源追溯</h2><button id="close-source" class="secondary-btn">关闭来源</button></div><p id="source-text"></p><div id="source-pages" class="source-pages"></div></dialog>
+<script src="/static/app.js" defer></script>
+</body></html>

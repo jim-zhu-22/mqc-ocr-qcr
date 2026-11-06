@@ -5,3 +5,4 @@
 *.jpeg binary
 *.whl binary
 *.zip binary
+src/mqc_qcr/static/template.css -text

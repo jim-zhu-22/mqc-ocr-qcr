@@ -1,0 +1,16 @@
+{
+  "date": "2026-11-07",
+  "template": "用户指定的代码整合/demo当前根目录版本，不使用demo/demo或update_backup",
+  "files": [
+    {
+      "source": "index.html",
+      "sha256": "85e6bd10ac9ae9ddec61864db97412ffb5b849b18d9dc31476c906c460e7245d"
+    },
+    {
+      "source": "src/styles.css",
+      "sha256": "1b7f03c86b3c73af8870d847a0a132d381587fb9f3015debf6228e00cd14a469"
+    }
+  ],
+  "reuse": "styles.css原样复制为template.css；复用app-shell/sidebar/brand/topbar/panel/form-grid/file-drop/subpage-tabs/table结构",
+  "adaptation": "仅OCR识别、四性评分两个主模块；辅助配置弹窗；既有本地JSON API适配。没有加载原Demo脚本、默认token、内网地址或数据库配置。"
+}
