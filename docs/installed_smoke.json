@@ -1,0 +1,16 @@
+{
+  "server": "installed wheel in clean-env",
+  "run_id": "9e63e60e13e449479137fb4f8576d6be",
+  "score_artifact": "scores-6c22ca48fbc4425d.json",
+  "summary": {
+    "records": 50,
+    "rule_checks": 650,
+    "numeric_scores": 250,
+    "ml_enabled": []
+  },
+  "health": {
+    "status": "ok",
+    "version": "0.0.0.dev0",
+    "formal_release": false
+  }
+}

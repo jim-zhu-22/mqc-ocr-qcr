@@ -1,0 +1,108 @@
+[
+  {
+    "source": "mqc_service/quality_rule/scoring/rule_engine.py",
+    "sha256": "302f21a4347d8314d58ae7998017a86e394df3cdf7d2c1b262eee96790a3aa12",
+    "snapshot_identical": true,
+    "target": "src/mqc_qcr/vendor/rule_engine.py",
+    "adaptation": "Package-relative imports; rule_engine injects semantic evaluator and changes failure wording; normalized LF line endings",
+    "target_sha256": "8e24c2ee1546318b2ff83dd7b4b86d885b36e01abf690519f3a1b6b8e4167a59"
+  },
+  {
+    "source": "mqc_service/quality_rule/scoring/rule_scope.py",
+    "sha256": "9ffa5d77dad950db1f88fccc50d162446847a8122470b745a8850fb24e5e0985",
+    "snapshot_identical": true,
+    "target": "src/mqc_qcr/vendor/rule_scope.py",
+    "adaptation": "Package-relative imports only; normalized LF line endings",
+    "target_sha256": "c378370c88d7b64dc7b6368d51bd1b15e4c405fd4ac7eb2a0d17ff768b43ddcf"
+  },
+  {
+    "source": "mqc_service/quality_rule/scoring/field_mapping.py",
+    "sha256": "9d849ad645623bc20b637908259a6396266b51e8396882d69c68ea917b80c0a9",
+    "snapshot_identical": true,
+    "target": "src/mqc_qcr/vendor/field_mapping.py",
+    "adaptation": "Package-relative imports only; normalized LF line endings",
+    "target_sha256": "2046ab85a43b71748f809b2f85c1f1aba73c0e577a7c9006d322363e2913c932"
+  },
+  {
+    "source": "mqc_service/quality_rule/condition_sanitizer.py",
+    "sha256": "96ef00ce0e9d4e21620ca2bfa86a5e8942a6b0b3d31c84b0a675a0d554d748e8",
+    "snapshot_identical": true,
+    "target": "src/mqc_qcr/vendor/condition_sanitizer.py",
+    "adaptation": "Package-relative imports only; normalized LF line endings",
+    "target_sha256": "96ef00ce0e9d4e21620ca2bfa86a5e8942a6b0b3d31c84b0a675a0d554d748e8"
+  },
+  {
+    "source": "zgh_common/scoring_fields.py",
+    "sha256": "0ded41fc8e3da069bea4960deeb02673d1abccaf7d45b823974fb6bd62af49b6",
+    "snapshot_identical": true,
+    "target": "src/mqc_qcr/vendor/scoring_fields.py",
+    "adaptation": "Package-relative imports only; normalized LF line endings",
+    "target_sha256": "0ded41fc8e3da069bea4960deeb02673d1abccaf7d45b823974fb6bd62af49b6"
+  },
+  {
+    "source": "mqc_service/core/prompt.py",
+    "sha256": "81ac90199bf448b8cf307f6d190adef96ce5f6df8ddb77751326100b1b45d2c3",
+    "target": "src/mqc_qcr/prompts/ocr_original.txt",
+    "adaptation": "Extracted constant, exact string preserved"
+  },
+  {
+    "source": "mqc_service/quality_rule/prompt_v2.py",
+    "sha256": "91185b589014ed56a545208d05ac2d539db2b70f53b9e270bbb81f4bdd636562",
+    "target": "src/mqc_qcr/prompts/extraction_original.txt",
+    "adaptation": "Extracted constant, exact string preserved"
+  },
+  {
+    "source": "mqc_service/core/parser/section/cleaner.py",
+    "sha256": "8b7e89944649f85c5aa2a07a083de988af32afb17f968fc7d943d1ab1f6d2005",
+    "snapshot_identical": true,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/core/parser/section/title_detector.py",
+    "sha256": "d2930284e8c0e2f65054b172061082c96727a23466b53c53212ceed5385276f3",
+    "snapshot_identical": true,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/core/parser/section/splitter.py",
+    "sha256": "4f675f504fd80ae7b378b478777d9de583690f72ff4a2798383e9109297676ec",
+    "snapshot_identical": true,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/quality_rule/compiler/compiler.py",
+    "sha256": "1b2a0e520add9a5ce28478bcbafbe9ccec9a0ba78d103a67c6d5c22e47be444e",
+    "snapshot_identical": true,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/quality_rule/compiler/compiler_prompt.py",
+    "sha256": "4f3b204e6d52c7ce0472ead704decd32705a23b6d5e2f6cb616b211d8ef51693",
+    "snapshot_identical": true,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/quality_rule/scoring/aggregator.py",
+    "sha256": "e1518acc1ea76932c393a1a063866e1a2f9c23664eeaa1107987df51bbf8aee6",
+    "snapshot_identical": false,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/quality_rule/scoring/accuracy_ml.py",
+    "sha256": "37a0656ebf1af4c41e41f8f1efa85e51bd7c6de37e220f8e7a936556980880b5",
+    "snapshot_identical": false,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/quality_rule/scoring/coding_necessity_ml.py",
+    "sha256": "33d7b8c0483ba32e357cdaed88637bff9eeb73a1b39eb72ce22efcc239c05a18",
+    "snapshot_identical": false,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  },
+  {
+    "source": "mqc_service/quality_rule/scoring/duplicate_model_adapter.py",
+    "sha256": "68904ceb6c9e54dca011647692e3b7e89a85a6388d29be6b2b4d93234a5aa3c6",
+    "snapshot_identical": false,
+    "action": "Reviewed, not copied; see SOURCE_AUDIT.md"
+  }
+]

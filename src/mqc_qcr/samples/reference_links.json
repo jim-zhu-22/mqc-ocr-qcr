@@ -1,0 +1,205 @@
+{
+  "note": "Evaluation-only links to synthetic references. Do not use these answer associations as input features. A null reference deliberately withholds source evidence.",
+  "links": [
+    {
+      "sample_id": "SAMPLE-001",
+      "reference_id": "REF-001"
+    },
+    {
+      "sample_id": "SAMPLE-002",
+      "reference_id": "REF-002"
+    },
+    {
+      "sample_id": "SAMPLE-003",
+      "reference_id": "REF-003"
+    },
+    {
+      "sample_id": "SAMPLE-004",
+      "reference_id": "REF-004"
+    },
+    {
+      "sample_id": "SAMPLE-005",
+      "reference_id": "REF-005"
+    },
+    {
+      "sample_id": "SAMPLE-006",
+      "reference_id": "REF-006"
+    },
+    {
+      "sample_id": "SAMPLE-007",
+      "reference_id": "REF-007"
+    },
+    {
+      "sample_id": "SAMPLE-008",
+      "reference_id": "REF-008"
+    },
+    {
+      "sample_id": "SAMPLE-009",
+      "reference_id": "REF-009"
+    },
+    {
+      "sample_id": "SAMPLE-010",
+      "reference_id": "REF-010"
+    },
+    {
+      "sample_id": "SAMPLE-011",
+      "reference_id": "REF-011"
+    },
+    {
+      "sample_id": "SAMPLE-012",
+      "reference_id": "REF-012"
+    },
+    {
+      "sample_id": "SAMPLE-013",
+      "reference_id": "REF-013"
+    },
+    {
+      "sample_id": "SAMPLE-014",
+      "reference_id": "REF-014"
+    },
+    {
+      "sample_id": "SAMPLE-015",
+      "reference_id": "REF-015"
+    },
+    {
+      "sample_id": "SAMPLE-016",
+      "reference_id": "REF-016"
+    },
+    {
+      "sample_id": "SAMPLE-017",
+      "reference_id": "REF-017"
+    },
+    {
+      "sample_id": "SAMPLE-018",
+      "reference_id": "REF-018"
+    },
+    {
+      "sample_id": "SAMPLE-019",
+      "reference_id": "REF-019"
+    },
+    {
+      "sample_id": "SAMPLE-020",
+      "reference_id": null
+    },
+    {
+      "sample_id": "SAMPLE-021",
+      "reference_id": "REF-021"
+    },
+    {
+      "sample_id": "SAMPLE-022",
+      "reference_id": "REF-022"
+    },
+    {
+      "sample_id": "SAMPLE-023",
+      "reference_id": "REF-023"
+    },
+    {
+      "sample_id": "SAMPLE-024",
+      "reference_id": "REF-024"
+    },
+    {
+      "sample_id": "SAMPLE-025",
+      "reference_id": "REF-025"
+    },
+    {
+      "sample_id": "SAMPLE-026",
+      "reference_id": "REF-026"
+    },
+    {
+      "sample_id": "SAMPLE-027",
+      "reference_id": "REF-027"
+    },
+    {
+      "sample_id": "SAMPLE-028",
+      "reference_id": "REF-028"
+    },
+    {
+      "sample_id": "SAMPLE-029",
+      "reference_id": "REF-029"
+    },
+    {
+      "sample_id": "SAMPLE-030",
+      "reference_id": "REF-030"
+    },
+    {
+      "sample_id": "SAMPLE-031",
+      "reference_id": "REF-031"
+    },
+    {
+      "sample_id": "SAMPLE-032",
+      "reference_id": "REF-031"
+    },
+    {
+      "sample_id": "SAMPLE-033",
+      "reference_id": "REF-033"
+    },
+    {
+      "sample_id": "SAMPLE-034",
+      "reference_id": "REF-033"
+    },
+    {
+      "sample_id": "SAMPLE-035",
+      "reference_id": "REF-035"
+    },
+    {
+      "sample_id": "SAMPLE-036",
+      "reference_id": "REF-035"
+    },
+    {
+      "sample_id": "SAMPLE-037",
+      "reference_id": "REF-037"
+    },
+    {
+      "sample_id": "SAMPLE-038",
+      "reference_id": "REF-038"
+    },
+    {
+      "sample_id": "SAMPLE-039",
+      "reference_id": "REF-039"
+    },
+    {
+      "sample_id": "SAMPLE-040",
+      "reference_id": "REF-039"
+    },
+    {
+      "sample_id": "SAMPLE-041",
+      "reference_id": "REF-041"
+    },
+    {
+      "sample_id": "SAMPLE-042",
+      "reference_id": "REF-042"
+    },
+    {
+      "sample_id": "SAMPLE-043",
+      "reference_id": "REF-043"
+    },
+    {
+      "sample_id": "SAMPLE-044",
+      "reference_id": "REF-044"
+    },
+    {
+      "sample_id": "SAMPLE-045",
+      "reference_id": "REF-045"
+    },
+    {
+      "sample_id": "SAMPLE-046",
+      "reference_id": "REF-046"
+    },
+    {
+      "sample_id": "SAMPLE-047",
+      "reference_id": null
+    },
+    {
+      "sample_id": "SAMPLE-048",
+      "reference_id": "REF-048"
+    },
+    {
+      "sample_id": "SAMPLE-049",
+      "reference_id": "REF-049"
+    },
+    {
+      "sample_id": "SAMPLE-050",
+      "reference_id": "REF-050"
+    }
+  ]
+}

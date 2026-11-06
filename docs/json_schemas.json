@@ -1,0 +1,200 @@
+{
+  "configuration": {
+    "$defs": {
+      "Endpoint": {
+        "additionalProperties": false,
+        "properties": {
+          "base_url": {
+            "default": "",
+            "title": "Base Url",
+            "type": "string"
+          },
+          "api_key": {
+            "default": "",
+            "format": "password",
+            "title": "Api Key",
+            "type": "string",
+            "writeOnly": true
+          },
+          "model": {
+            "default": "",
+            "title": "Model",
+            "type": "string"
+          },
+          "timeout_seconds": {
+            "default": 90,
+            "maximum": 600,
+            "minimum": 1,
+            "title": "Timeout Seconds",
+            "type": "number"
+          },
+          "retries": {
+            "default": 2,
+            "maximum": 5,
+            "minimum": 0,
+            "title": "Retries",
+            "type": "integer"
+          },
+          "max_tokens": {
+            "default": 8192,
+            "maximum": 131072,
+            "minimum": 32,
+            "title": "Max Tokens",
+            "type": "integer"
+          }
+        },
+        "title": "Endpoint",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "ocr": {
+        "$ref": "#/$defs/Endpoint"
+      },
+      "text": {
+        "$ref": "#/$defs/Endpoint"
+      }
+    },
+    "title": "ModelConfig",
+    "type": "object"
+  },
+  "rule": {
+    "additionalProperties": false,
+    "properties": {
+      "id": {
+        "maxLength": 100,
+        "minLength": 1,
+        "pattern": "^[A-Za-z0-9_.-]+$",
+        "title": "Id",
+        "type": "string"
+      },
+      "quality_type": {
+        "enum": [
+          "NECESSITY",
+          "COMPLETENESS",
+          "ACCURACY",
+          "UNIQUENESS"
+        ],
+        "title": "Quality Type",
+        "type": "string"
+      },
+      "rule_title": {
+        "minLength": 1,
+        "title": "Rule Title",
+        "type": "string"
+      },
+      "rule_text": {
+        "minLength": 1,
+        "title": "Rule Text",
+        "type": "string"
+      },
+      "material_entity": {
+        "default": "",
+        "title": "Material Entity",
+        "type": "string"
+      },
+      "condition_text": {
+        "default": "",
+        "title": "Condition Text",
+        "type": "string"
+      },
+      "source_sections": {
+        "items": {
+          "type": "string"
+        },
+        "minItems": 1,
+        "title": "Source Sections",
+        "type": "array"
+      },
+      "source_pages": {
+        "items": {
+          "type": "integer"
+        },
+        "minItems": 1,
+        "title": "Source Pages",
+        "type": "array"
+      },
+      "weight": {
+        "default": 1,
+        "exclusiveMinimum": 0,
+        "maximum": 1000,
+        "title": "Weight",
+        "type": "number"
+      },
+      "enabled": {
+        "default": true,
+        "title": "Enabled",
+        "type": "boolean"
+      },
+      "source_type": {
+        "default": "extracted",
+        "enum": [
+          "extracted",
+          "manual",
+          "replay"
+        ],
+        "title": "Source Type",
+        "type": "string"
+      },
+      "checks": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Checks",
+        "type": "array"
+      }
+    },
+    "required": [
+      "id",
+      "quality_type",
+      "rule_title",
+      "rule_text",
+      "source_sections",
+      "source_pages"
+    ],
+    "title": "Rule",
+    "type": "object"
+  },
+  "score_input": {
+    "additionalProperties": false,
+    "properties": {
+      "materials": {
+        "items": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "maxItems": 2000,
+        "minItems": 1,
+        "title": "Materials",
+        "type": "array"
+      },
+      "catalog": {
+        "additionalProperties": true,
+        "title": "Catalog",
+        "type": "object"
+      },
+      "dimension_weights": {
+        "additionalProperties": {
+          "type": "number"
+        },
+        "title": "Dimension Weights",
+        "type": "object"
+      },
+      "ml": {
+        "additionalProperties": {
+          "additionalProperties": true,
+          "type": "object"
+        },
+        "title": "Ml",
+        "type": "object"
+      }
+    },
+    "required": [
+      "materials"
+    ],
+    "title": "ScoreInput",
+    "type": "object"
+  }
+}

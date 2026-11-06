@@ -1,0 +1,25 @@
+{
+  "pages": [
+    {
+      "page_num": 1,
+      "text_content": "别名化样本：名称、型号及编号已替换；规则保留；示例型号不作为产品选型依据。\n物料主数据质量控制单\n适用品类：制造商A（集团A）设备A\n编号：DOC-A-0001\n编写/日期：人员A / 日期A\n审查/日期：人员B / 日期A\n批准/日期：人员C / 日期B\n"
+    },
+    {
+      "page_num": 2,
+      "text_content": "别名化样本：名称、型号及编号已替换；规则保留；示例型号不作为产品选型依据。\nORG-A\n物料主数据质量控制单\n版次：1\n页：2 / 5\n文件修改跟踪页\nRevisions\n版次 Rev. 作者 Drafter 文件修改原因 Reason of Revision 日期 Date 修改页 Page\n1 人员A 根据物料主数据质量控制管理需要，新编本文件。 日期C 全部\n"
+    },
+    {
+      "page_num": 3,
+      "text_content": "别名化样本：名称、型号及编号已替换；规则保留；示例型号不作为产品选型依据。\nORG-A\n物料主数据质量控制单\n版次：1\n页：3 / 5\n1. 适用范围\n制造商A 设备A。\n特别关注：集团A是集团，制造商A是其下属工厂。新备件标注制造商A，旧备件标注集团A。设备A、装置B、设备C和装置D等备件的制造商建议填写制造商A，或填写其集团公司名称集团A。\n2. 概述\n制造商A 设备A在行业A广泛使用，以型号为识别依据。型号各字符对应设备A的各类参数，详见选型表。\n3. 编码必要性判断原则\n制造商A 设备A即为最小单元，无零部件。设备A存在一定故障概率，需要编码。\n4. 编码准确性、完整性和唯一性\n4.1.识别最小关键参数\n最小关键参数为型号。同类设备外形相似，一般单凭实物照片无法准确识别；设备表面无型号信息时，照片需包含型号信息才能识别。\n4.2.唯一性判断依据\n1. 完整的型号信息可唯一确定制造商A 设备A。\n2. 或提供所有的参数信息（需根据选型表对应完整的参数），唯一确定设备A。\n4.3.其他重要关键参数\n型号包含了表盘尺寸、安装方式、过程接口尺寸、测量精度、是否充油等参数信息。\n若型号不全，需提供相应的参数信息，才能识别。\n例如：设备B【FA1-C20.D11J/0001_0002】\nOrdering example with options\nFA 1 - C 2 0 . D11 J / 0001 _ 0002\nEquipment B\nNominal size 150 mm\nBack connection, front flange, 3 mounting holes, case material 1.4301\nProcess connection 1/2 NPT\nNo liquid filling\nScale bar : 0 ... 10 bar\nMax. static pressure : 10 bar\nOption : Window laminated safety glass\nOption : Adjustable friction pointer\n"
+    },
+    {
+      "page_num": 4,
+      "text_content": "别名化样本：名称、型号及编号已替换；规则保留；示例型号不作为产品选型依据。\nORG-A\n物料主数据质量控制单\n版次：1\n页：4 / 5\n5. 字段填写规范\n制造商A设备A主数据各字段维护标准，详见《主数据字段维护索引》。以下关键字段维护标准补充如下：\n字段名 层级 类型 维护标准 信息来源依据\n物料描述（中文）+采购订单文本（中文） 集团层 通用客观类字段\n样例：\n设备A【FB2-C20.D12】\n设备B【FA1-C20.D11J/0001_0002】\n厂家产品手册\n物料描述（英文）+采购订单文本（英文） 集团层 通用客观类字段\n样例：\nEQUIPMENT A【FB2-C20.D12】\nEQUIPMENT B【FA1-C20.D11J/0001_0002】\n厂家产品手册\n基本物料（材质） 集团层 通用客观类字段 不适用 NA\n制造商 集团层 通用客观类字段\n制造商A 或 集团A\n样例：\n企业编号A、企业编号B\n厂家产品手册、实物、图纸\n制造商零件编号 集团层 通用客观类字段 无 NA\n电厂制造厂图纸号 电厂层 通用客观类字段 无 NA\n电厂制造厂图项号 电厂层 通用客观类字段 无 NA\n检验文本 集团层 专用类字段 无 NA\n"
+    },
+    {
+      "page_num": 5,
+      "text_content": "别名化样本：名称、型号及编号已替换；规则保留；示例型号不作为产品选型依据。\nORG-A\n物料主数据质量控制单\n版次：1\n页：5 / 5\n6. 其他重要事项\n无。\n7. 附件\n附件1：FA-FB-FC-FD 设备B选型表，更多选型表见资料A。\nOrdering details FA-FB-FC-FD\nF 1 - . xxx /\nModel\nEquipment B F\nType of housing\nProcess connection 90° bottom (V-type) or lower back A\nProcess connection 90° bottom (V-type) or lower back, baffle wall B\nProcess connection bottom parallel C\nProcess connection bottom parallel, baffle wall D\nNominal size\n150 mm 1\n-\nType of mounting\nStainless steel case and bezel ring 1.4301 (AISI 304)\nBottom connection, back flange for wall mounting, 3 mounting holes A\nBack connection, front flange, 3 mounting holes (1) B\nBottom connection, front flange, 3 mounting holes C\nBottom connection D\nBack connection, back flange for wall mounting, 3 mounting holes (1) E\nBack connection (1) F\nBottom connection with mounting bracket for 2″ tubes P\nStainless steel case and bezel ring 1.4404 (AISI 316L)\nBottom connection, back flange for wall mounting, 3 mounting holes 1\nBack connection, front flange, 3 mounting holes (1) 2\nBottom connection, front flange, 3 mounting holes 3\nBottom connection 4\nBack connection, back flange for wall mounting, 3 mounting holes (1) 5\nBack connection (1) 6\nBottom connection with mounting bracket for 2″ tubes 8\nProcess connection\nG 1/2 3\n1/2 NPT 6\nLiquid filling\nDry 0\nBH1: low viscosity glycerin/water 86% (medium : -20 ... +70°C) (2) 1\nBH2: high viscosity glycerin 99.5% (medium : 0 ... +90°C) (2) 2\nBH3: silicone oil (medium : -40 ... +100°C) (2) 3\nBH4: low temperature silicone (medium : -60 ... +100°C) (2) 4\nBH5: Fluor carbon for oxygen use (medium : -15 ... +100°C) (2) 5\n.\nUnit of measurement / Pressure ranges\nbar Bxx\npsi Hxx\nkPa Dxx\nMPa Exx\nmbar Nxx\nkg/cm² Fxx\nMax. static pressure\nSee table on page 2 x\nOptions to be added behind the / (see example below) /\n(1) Not available for types of housing B and D\n(2) The accuracy of filled gauges is reduced (see table on page 2)\n选型表.1\n"
+    }
+  ],
+  "origin": "Saved Codex visual transcription, not Qwen API"
+}

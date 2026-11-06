@@ -1,0 +1,33 @@
+{
+  "date_local": "2026-11-07",
+  "timezone": "Asia/Shanghai",
+  "python": "3.13.9",
+  "tests": 19,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "seconds": "10.973",
+  "real_provider_acceptance": "not run; endpoints and credentials not supplied",
+  "trained_models": "not run; HTTP bridge contract tested with explicit stub",
+  "test_cases": [
+    "test_api_edit_compile_manual_rescore_export_and_secrets",
+    "test_invalid_credentials_not_echoed_and_cross_origin_blocked",
+    "test_interrupted_run_keeps_artifacts",
+    "test_retry_audit_and_secret_redaction",
+    "test_permanent_errors_not_retried[401-AUTH_FAILED]",
+    "test_permanent_errors_not_retried[403-AUTH_FAILED]",
+    "test_permanent_errors_not_retried[404-HTTP_ERROR]",
+    "test_timeout_and_truncation_retained",
+    "test_actual_http_pdf_to_ocr_rules_dsl_scoring",
+    "test_page_failure_preserves_completed_pages_and_raw_error",
+    "test_invalid_rule_json_remains_downloadable",
+    "test_image_upload_through_http_api",
+    "test_enabled_ml_http_raw_response_and_key_redaction",
+    "test_50_records_650_checks_250_numeric_scores",
+    "test_section_regressions_preserve_lists_fractions_and_42",
+    "test_fail_unverified_zero_excluded_removed_and_weights",
+    "test_identity_determinacy_is_not_cross_record_code_dedup",
+    "test_completeness_never_calls_model_and_ml_rejected",
+    "test_enabled_ml_evidence_is_weighted_and_failure_not_invented"
+  ]
+}

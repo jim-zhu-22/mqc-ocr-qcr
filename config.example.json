@@ -1,0 +1,4 @@
+{
+  "ocr": {"base_url": "", "api_key": "", "model": "", "timeout_seconds": 90, "retries": 2, "max_tokens": 8192},
+  "text": {"base_url": "", "api_key": "", "model": "", "timeout_seconds": 90, "retries": 2, "max_tokens": 8192}
+}
