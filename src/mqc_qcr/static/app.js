@@ -39,7 +39,7 @@ function setView(view) {
     button.classList.toggle('active', selected);
     if (selected) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
   }
-  $('page-title').textContent = {ocr:'OCR识别',score:'四性评分',rules:'四性评分 / 规则查找'}[view];
+  $('page-title').textContent = {ocr:'OCR识别',score:'四性评分',rules:'规则查找'}[view];
   if (location.hash !== '#' + view) location.hash = view;
 }
 for (const button of document.querySelectorAll('.nav-list [data-view], [data-open-view]')) button.onclick = () => {
