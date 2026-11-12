@@ -1,9 +1,15 @@
 {
   "date": "2026-11-07",
-  "main_modules": ["OCR识别", "四性评分"],
+  "main_modules": [
+    "OCR识别",
+    "四性评分"
+  ],
   "template_stylesheet_byte_identical": true,
   "javascript_syntax_check": "passed",
-  "python_regression_tests": {"passed": 19, "warnings": 1},
+  "python_regression_tests": {
+    "passed": 19,
+    "warnings": 1
+  },
   "browser_checks": {
     "replay_document_pages": 5,
     "page_3_text_and_image": "verified",
@@ -17,7 +23,8 @@
     "desktop_horizontal_overflow": false,
     "temporary_viewport_reset": true
   },
-  "screenshots": ["demo-ocr-preview.jpg", "demo-score-preview.jpg"],
+  "screenshots": [],
   "real_provider_models_executed": false,
-  "note": "UI验证使用脱敏合成样例重放；实际模型接口验收仍需用户配置。"
+  "note": "UI验证使用脱敏合成样例重放；实际模型接口验收仍需用户配置。",
+  "screenshot_distribution_note": "历史截图含旧项目标题，已于2026-11-12移出分发包；原验证记录保留。"
 }

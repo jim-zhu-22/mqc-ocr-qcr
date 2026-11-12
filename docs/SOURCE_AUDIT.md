@@ -1,6 +1,6 @@
 # 来源与差异审查
 
-日期：2026-11-07（Asia/Shanghai）。用户指定的“桌面/核电站实习/代码整合”当前实际文件为主基准，核心为mqc_service。工作区父Git仓库存在大量其他任务未跟踪文件，因此本软件使用独立嵌套仓库，未暂存父仓库文件。原目录和论文只读。
+日期：2026-11-07（Asia/Shanghai）。以用户提供的工程参考源码为基准，使用独立仓库维护适配版本；原始材料保持只读。分发文档不包含原始本机目录或实习背景。
 
 ## 选择方法
 
@@ -8,13 +8,15 @@
 
 ## 复用
 
-| 原路径（相对代码整合） | 处理 |
+`legacy_common`是用于分发的来源包名别名，不代表原始包实际改名。清单中保留原文件SHA256及目标路径，便于授权审查时核对来源。
+
+| 来源标识（部分使用中性别名） | 处理 |
 | --- | --- |
 | mqc_service/quality_rule/scoring/rule_engine.py | 复用字段别名、条件、required/来源一致性等执行行为；改相对导入、注入语义执行器，错误文案改为待核实0分。原aggregate_scores仍作为来源代码保留但本软件不调用，数值策略由新scoring.py实现。 |
 | mqc_service/quality_rule/scoring/rule_scope.py | 复用控制单及实体适用性逻辑，改包内导入。新计分层仅将已明确对象不同/条件为false排出分母，未确认仍计0。 |
 | mqc_service/quality_rule/scoring/field_mapping.py | 复用字段映射。 |
 | mqc_service/quality_rule/condition_sanitizer.py | 复用运行时条件清理。 |
-| zgh_common/scoring_fields.py | 复用字段状态和别名。 |
+| legacy_common/scoring_fields.py | 复用字段状态和别名。 |
 | mqc_service/core/prompt.py 的 MQC_PROMPT | AST读取常量原文，作为ocr_original.txt；无凭据或配置模块加载。 |
 | mqc_service/quality_rule/prompt_v2.py 的 QUALITY_RULE_PROMPT | 原常量只供审查，不作为新运行的提取提示词。 |
 | 脱敏证据包 reproduction/semantic_adapter.py | 保留为synthetic_identity.py，仅明确重放v1使用。 |
@@ -30,4 +32,4 @@
 
 ## 不在本包范围
 
-原内网配置、数据库与向量检索、训练样本、训练模型、所有历史分支、独立Excel上传后端、论文TeX/参考文献。当前程序是可独立运行的端到端软件适配，不是原整个内网服务的原样部署。来源代码和脱敏样例的公开许可仍需权利人确认。
+原系统运行环境、非分发数据与模型资产、历史版本及论文资料不包含在本包。当前程序是可独立运行的软件适配。来源代码和脱敏样例的公开许可仍需权利人确认。

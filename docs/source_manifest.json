@@ -32,12 +32,13 @@
     "target_sha256": "96ef00ce0e9d4e21620ca2bfa86a5e8942a6b0b3d31c84b0a675a0d554d748e8"
   },
   {
-    "source": "zgh_common/scoring_fields.py",
+    "source": "legacy_common/scoring_fields.py",
     "sha256": "0ded41fc8e3da069bea4960deeb02673d1abccaf7d45b823974fb6bd62af49b6",
     "snapshot_identical": true,
     "target": "src/mqc_qcr/vendor/scoring_fields.py",
     "adaptation": "Package-relative imports only; normalized LF line endings",
-    "target_sha256": "0ded41fc8e3da069bea4960deeb02673d1abccaf7d45b823974fb6bd62af49b6"
+    "target_sha256": "0ded41fc8e3da069bea4960deeb02673d1abccaf7d45b823974fb6bd62af49b6",
+    "source_is_anonymized_alias": true
   },
   {
     "source": "mqc_service/core/prompt.py",

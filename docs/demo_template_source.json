@@ -1,6 +1,6 @@
 {
   "date": "2026-11-07",
-  "template": "用户指定的代码整合/demo当前根目录版本，不使用demo/demo或update_backup",
+  "template": "用户指定的参考模板/demo当前根目录版本，不使用demo/demo或update_backup",
   "files": [
     {
       "source": "index.html",
